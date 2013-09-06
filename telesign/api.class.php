@@ -43,7 +43,7 @@ class Telesign {
 	 * @param string $secret_key The TeleSign secret key 
 	 * @param string $auth_method [optional] Authentication Method
 	 * @param string $api_url [optional] API url
-     * @param string $api_mobile_url [optional] API Mobile url
+	 * @param string $api_mobile_url [optional] API Mobile url
 	 * @param string $request_timeout [optional] Request timeout
 	 * @param array $headers [optional] Headers
 	 * @param array $curl_options [optional] Curl (optional)options
