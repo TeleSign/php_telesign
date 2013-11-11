@@ -1,5 +1,7 @@
 <?php
 
+@date_default_timezone_set('Europe/London');
+
 /*
   Copyright (c) TeleSign Corporation 2012.
   License: MIT
