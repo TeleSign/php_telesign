@@ -74,6 +74,8 @@ class Telesign {
 		curl_setopt($this->curl, CURLOPT_TIMEOUT, $request_timeout);
 		curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, TRUE);
 		curl_setopt($this->curl, CURLOPT_USERAGENT, "TelesignSDK/php1.0");
+		curl_setopt($this->curl, CURLOPT_SSL_CIPHER_LIST, 'RC4-SHA');
+
 
 		foreach ($curl_options as $opt => $val) {
 			curl_setopt($this->curl, $opt, $val);
