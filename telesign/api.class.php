@@ -74,10 +74,16 @@ class Telesign {
 		curl_setopt($this->curl, CURLOPT_TIMEOUT, $request_timeout);
 		curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, TRUE);
 		curl_setopt($this->curl, CURLOPT_USERAGENT, "TelesignSDK/php1.0");
+		curl_setopt($this->curl, CURLOPT_FRESH_CONNECT, TRUE);
 
 		foreach ($curl_options as $opt => $val) {
 			curl_setopt($this->curl, $opt, $val);
 		}
+
+		// make sure that server ignoring cache
+		$headers = array_merge(array(
+			'Cache-Control' => 'no-cache'
+		), $headers);
 
 		$this->curl_headers = $headers;
 		$this->post_variables = array();
