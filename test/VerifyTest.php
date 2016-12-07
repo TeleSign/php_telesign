@@ -125,4 +125,50 @@ class VerifyTest extends PHPUnit_Framework_TestCase {
 		$this->assertTrue(count($result_2['errors']) == 0);
 	}
 
+	public function test_verify_push() {
+		if (VerifyTest::CUSTOMER_ID == "" || VerifyTest::SECRET_KEY == "" || VerifyTest::PHONE_NUMBER == "") {
+			$this->fail("CUSTOMER_ID, SECRET_KEY and PHONE_NUMBER must be set to pass this test");
+		}
+
+		$verify = new Verify(VerifyTest::CUSTOMER_ID, VerifyTest::SECRET_KEY);
+		$result = $verify->push(VerifyTest::PHONE_NUMBER, "", "", "Outlook-2FA", "Test Message");
+		$this->assertNotNull($result);
+		$this->assertTrue(count($result['errors']) == 0);
+
+		$reference_id = $result['reference_id'];
+		$result_2 = $verify->status($reference_id);
+		$this->assertNotNull($result_2);
+		$this->assertTrue(count($result_2['errors']) == 0);
+	}
+
+	public function test_verify_soft_token() {
+		if (VerifyTest::CUSTOMER_ID == "" || VerifyTest::SECRET_KEY == "" || VerifyTest::PHONE_NUMBER == "") {
+			$this->fail("CUSTOMER_ID, SECRET_KEY and PHONE_NUMBER must be set to pass this test");
+		}
+
+		$verify = new Verify(VerifyTest::CUSTOMER_ID, VerifyTest::SECRET_KEY);
+		$result = $verify->sms(VerifyTest::PHONE_NUMBER, "123112");
+		$this->assertNotNull($result);
+		$this->assertTrue(count($result['errors']) == 0);
+
+		$result_2 = $verify->soft_token(VerifyTest::PHONE_NUMBER, "", "123112");
+		$this->assertNotNull($result_2);
+		$this->assertTrue(count($result_2['errors']) == 0);
+	}
+
+	public function test_verify_two_way_sms() {
+		if (VerifyTest::CUSTOMER_ID == "" || VerifyTest::SECRET_KEY == "" || VerifyTest::PHONE_NUMBER == "") {
+			$this->fail("CUSTOMER_ID, SECRET_KEY and PHONE_NUMBER must be set to pass this test");
+		}
+
+		$verify = new Verify(VerifyTest::CUSTOMER_ID, VerifyTest::SECRET_KEY);
+		$result = $verify->two_way_sms(VerifyTest::PHONE_NUMBER, "BACS");
+		$this->assertNotNull($result);
+		$this->assertTrue(count($result['errors']) == 0);
+
+		$reference_id = $result['reference_id'];
+		$result_2 = $verify->status($reference_id);
+		$this->assertNotNull($result_2);
+		$this->assertTrue(count($result_2['errors']) == 0);
+	}
 }

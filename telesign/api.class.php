@@ -1,5 +1,7 @@
 <?php
 
+@date_default_timezone_set('Europe/London');
+
 /*
   Copyright (c) TeleSign Corporation 2012.
   License: MIT
@@ -43,14 +45,17 @@ class Telesign {
 	 * @param string $secret_key The TeleSign secret key 
 	 * @param string $auth_method [optional] Authentication Method
 	 * @param string $api_url [optional] API url
-	 * @param string $request_timeout [optional] Request timeout 
-	 * @param string $headers [optional] Headers
-	 * @param string $curl_options [optional] Curl (optional)options
+	 * @param string $api_mobile_url [optional] API Mobile url
+	 * @param string $request_timeout [optional] Request timeout
+	 * @param array $headers [optional] Headers
+	 * @param array $curl_options [optional] Curl (optional)options
 	 */
 	function __construct(
-	$customer_id, $secret_key, // required
+		$customer_id, $secret_key, // required
 		$auth_method = "hmac-sha1", // also accepted: "hmac-sha256"
-		$api_url = "https://rest.telesign.com", $request_timeout = 5, // seconds
+		$api_url = "https://rest.telesign.com",
+		$api_mobile_url = "https://rest-mobile.telesign.com",
+		$request_timeout = 5, // seconds
 		$headers = array(), $curl_options = array()
 	) {
 
@@ -59,6 +64,7 @@ class Telesign {
 		$this->key = base64_decode($secret_key);
 		$this->auth_method = $auth_method;
 		$this->api_url = $api_url;
+		$this->api_mobile_url = $api_mobile_url;
 
 		// note that we're initializing the timestamp at instantiation time, so we can have
 		//   a const reference to it during the lifetime of the object; this means, however, 
@@ -161,7 +167,7 @@ class Telesign {
 	 * @param string $phone_number The phone number to send to service
 	 * @param string $verify_code The code to send to service. Set to null to let Telesign generate the code
 	 * @param string $service Service that this function use
-	 * @param string $more More data to send to service
+	 * @param array $more More data to send to service
 	 * 
 	 * @return string The fully formed response object repersentation of the JSON reply
 	 */
@@ -176,7 +182,11 @@ class Telesign {
 
 		// build verify url
 		$resource = "/v1/verify/" . $service;
-		$url = $this->api_url . $resource;
+		if ($service == "push" || $service == "soft_token") {
+			$url = $this->api_mobile_url . $resource;
+		} else {
+			$url = $this->api_url . $resource;
+		}
 		curl_setopt($this->curl, CURLOPT_URL, $url);
 
 		$this->method = "POST";
@@ -191,7 +201,7 @@ class Telesign {
 	 * 
 	 * @param string $phone_number The phone number to send to service
 	 * @param string $service Service that this function use
-	 * @param string $more More data to send to service
+	 * @param array $more More data to send to service
 	 * 
 	 * @return string The fully formed response object repersentation of the JSON reply
 	 */
@@ -304,18 +314,93 @@ class Verify extends Telesign {
 	}
 
 	/**
-	 * Make a Verify SMS request to TeleSign's API. This method allows 
-	 * the language, verification code and template of the message to be set. 
+	 * The TeleSign Verify Push web service is a server-side component of the TeleSign AuthID application, and it allows you to provide on-device transaction authorization for your users. It works by delivering authorization requests to your users via Push Notification, and then by receiving their permission responses via their mobile device’s wireless Internet connection. The service provides two levels of security to support two types of transactions.
 	 * 
-	 * @link https://portal.telesign.com/docs/content/verify-sms.html
+	 * @link https://portal.telesign.com/docs/content/verify-push.html
 	 * 
 	 * @param string $phone_number The phone number to send the sms message
-	 * @param string $verify_code [optional] The code to send via sms. Set to null to let Telesign generate the code
-	 * @param string $language [optional] The String representation of the language to send the sms message
-	 * @param string $template [optional] The template of the message that is being sent. Set to null for default, otherwise must include $$CODE$$ as a variable placeholder
-	 * 
+	 * @param string $notification_type [optional] Indicates the security measure to use for transaction authorization. The following types are currently supported: CODE, SIMPLE
+	 * @param string $notification_value [optional]  Applies when notification_type=CODE. The verification code used for the code challenge. This is a randomly generated numeric value that you display in your web page for your user. After reading this value, the user then types it into the AuthID application on their mobile device
+	 * @param string $template Specifies a custom banner and icon for the TeleSign AuthID application to use for this notification. This allows you to brand your notifications with your corporate logo and/or your service-specific branding.
+	 * @param string $message [optional] The message to display to the end user, in the body of the notification. You normally leave this parameter empty (or set to null), and the default message is displayed.
+     *
 	 * @return string The fully formed response object repersentation of the JSON reply
 	 */
+	public function push($phone_number, $notification_type = "SIMPLE", $notification_value = "", $template = "", $message = "") {
+		$more = array();
+		if (!empty($notification_type)) {
+			$more['notification_type'] = $notification_type;
+		}
+		if (!empty($notification_value)) {
+			$more['notification_value'] = $notification_value;
+		}
+		if (!empty($template)) {
+			$more['template'] = $template;
+		}
+		if (!empty($message)) {
+			$more['message'] = $message;
+		}
+		return $this->verify($phone_number, "", 'push', $more);
+	}
+
+	/**
+	* The TeleSign Verify Soft Token web service is a server-side component of the TeleSign AuthID application, and it allows you to authenticate your end users when they use the TeleSign AuthID application on their mobile device to generate a Time-based One-time Password (TOTP) verification code
+	*
+	* @link https://portal.telesign.com/docs/content/verify-soft-token.html
+	*
+	* @param string $phone_number The phone number for the Verify Soft Token request, including country code
+	* @param string $soft_token_id [optional] The alphanumeric string that uniquely identifies your TeleSign soft token subscription
+	* @param string $verify_code The verification code received from the end user
+	*
+	* @return string The fully formed response object repersentation of the JSON reply
+	*/
+	public function soft_token($phone_number, $soft_token_id = "", $verify_code = "") {
+		$more = array();
+		if (!empty($soft_token_id)) {
+			$more['soft_token_id'] = $soft_token_id;
+		}
+		return $this->verify($phone_number, $verify_code, 'soft_token', $more);
+	}
+
+	/**
+	* The TeleSign Verify 2-Way SMS web service allows you to authenticate your users and verify user transactions via two-way Short Message Service (SMS) wireless communication. Verification requests are sent to user’s in a text message, and users return their verification responses by replying to the text message.
+	*
+	* @link https://portal.telesign.com/docs/content/verify-2way-sms.html
+	*
+	* @param string $phone_number The phone number for the Verify Soft Token request, including country code
+	* @param string $ucid A string specifying one of the Use Case Codes
+	* @param string $message [optional] The text to display in the body of the text message. You must include the $$CODE$$ placeholder for the verification code somewhere in your message text. TeleSign automatically replaces it with a randomly-generated verification code
+	* @param string $validity_period [optional] This parameter allows you to place a time-limit on the verification. This provides an extra level of security by restricting the amount of time your end user has to respond (after which, TeleSign automatically rejects their response). Values are expressed as a natural number followed by a lower-case letter that represents the unit of measure. You can use ‘s’ for seconds, ‘m’ for minutes, ‘h’ for hours, and ‘d’ for days
+	*
+	* @return string The fully formed response object repersentation of the JSON reply
+	*/
+	public function two_way_sms($phone_number, $ucid, $message = "", $validity_period = "") {
+		$more = array();
+		if (!empty($ucid)) {
+			$more['ucid'] = $ucid;
+		}
+		if (!empty($message)) {
+			$more['message'] = $message;
+		}
+		if (!empty($validity_period)) {
+			$more['validity_period'] = $validity_period;
+		}
+		return $this->verify($phone_number, "", 'two_way_sms', $more);
+	}
+
+	/**
+	* Make a Verify SMS request to TeleSign's API. This method allows
+	* the language, verification code and template of the message to be set.
+	*
+	* @link https://portal.telesign.com/docs/content/verify-sms.html
+	*
+	* @param string $phone_number The phone number to send the sms message
+	* @param string $verify_code [optional] The code to send via sms. Set to null to let Telesign generate the code
+	* @param string $language [optional] The String representation of the language to send the sms message
+	* @param string $template [optional] The template of the message that is being sent. Set to null for default, otherwise must include $$CODE$$ as a variable placeholder
+	*
+	* @return string The fully formed response object repersentation of the JSON reply
+	*/
 	public function sms($phone_number, $verify_code = "", $language = "", $template = "") {
 		$more = array();
 		if (!empty($language)) {
