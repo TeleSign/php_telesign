@@ -1,12 +1,5 @@
 <?php
 
-/*
-  Copyright (c) TeleSign Corporation 2012.
-  License: MIT
-  Support email address "support@telesign.com"
-  Author: lqm1010
- */
-
 /**
  * This file defines the the API SDK for Telesign
  * 
@@ -18,23 +11,20 @@
  * @author lqm1010 <lqm1010@gmail.com>
  */
 
-/**
-* Telesign Class is common class for PhoneId and Verify class to extends
-*
-* @package  Telesign_PHP_SDK
-* @access   public
-*/
-class Telesign {
+class TeleSign {
 
-	protected $curl;
-	protected $method;
-	protected $content_type;
-	protected $timestamp;
-	protected $curl_headers;
-	protected $post_variables;
-	protected $raw_response;
-	protected $curl_error_num;
-	protected $curl_error_desc;
+	private $method;
+	private $auth_method;
+	private $content_type;
+	private $customer_id;
+	private $key;
+	private $api_url;
+	private $curl_headers;
+	private $timestamp;
+	private $post_variables = array();
+	private $raw_response = "";
+        private $curl_error_num = false;
+	private $curl_error_desc = false;
 
 	/**
 	 * Implementation of the TeleSign api 
@@ -48,10 +38,13 @@ class Telesign {
 	 * @param string $curl_options [optional] Curl (optional)options
 	 */
 	function __construct(
-	$customer_id, $secret_key, // required
-		$auth_method = "hmac-sha1", // also accepted: "hmac-sha256"
-		$api_url = "https://rest.telesign.com", $request_timeout = 5, // seconds
-		$headers = array(), $curl_options = array()
+	        $customer_id, 
+		$secret_key, // required
+		$request_timeout = 30, // seconds
+		$headers = array(), 
+		$curl_options = array(),
+		$auth_method = "hmac-sha256", // also accepted: "hmac-sha1"
+		$api_url = "https://rest.telesign.com"
 	) {
 
 		// the encoding key is actually the base64 decoded form of the secret key
@@ -59,6 +52,7 @@ class Telesign {
 		$this->key = base64_decode($secret_key);
 		$this->auth_method = $auth_method;
 		$this->api_url = $api_url;
+		$this->curl_headers = $headers;
 
 		// note that we're initializing the timestamp at instantiation time, so we can have
 		//   a const reference to it during the lifetime of the object; this means, however, 
@@ -73,17 +67,12 @@ class Telesign {
 		$this->curl = curl_init();
 		curl_setopt($this->curl, CURLOPT_TIMEOUT, $request_timeout);
 		curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, TRUE);
-		curl_setopt($this->curl, CURLOPT_USERAGENT, "TelesignSDK/php1.0");
+		//curl_setopt($this->curl, CURLOPT_USERAGENT, "TelesignSDK/php1.0");
 
 		foreach ($curl_options as $opt => $val) {
 			curl_setopt($this->curl, $opt, $val);
 		}
 
-		$this->curl_headers = $headers;
-		$this->post_variables = array();
-		$this->raw_response = "";
-		$this->curl_error_num = -1;
-		$this->curl_error_desc = "";
 	}
 
 	/**
@@ -144,14 +133,15 @@ class Telesign {
 
 		// run the curl and get information
 		$this->raw_response = curl_exec($this->curl);
-		$this->curl_error_num = curl_errno($this->curl);
-		$this->curl_error_desc = curl_error($this->curl);
 
 		// if there is error then return empty string
-		if ($this->curl_error_num) {
-			return "";
-		}
-
+                if (curl_errno($this->curl)) { 
+                    $this->curl_error_num = curl_errno($this->curl); 
+                    $this->curl_error_desc = curl_error($this->curl); 
+                    curl_close($this->curl); 
+                    return; 
+                } 
+		
 		return $this->raw_response;
 	}
 
@@ -159,17 +149,17 @@ class Telesign {
 	 * General verify function that support for child function
 	 * 
 	 * @param string $phone_number The phone number to send to service
-	 * @param string $verify_code The code to send to service. Set to null to let Telesign generate the code
-	 * @param string $service Service that this function use
-	 * @param string $more More data to send to service
+	 * @param array $options More optional data to send to service
+         * @param string $service Service that this function use
 	 * 
 	 * @return string The fully formed response object repersentation of the JSON reply
 	 */
-	public function verify($phone_number, $verify_code, $service = "call", $more = array()) {
+	public function verify($phone_number, $options = array() , $service = "call") {
 
 		// build the POST contents string
-		$post_data = "phone_number=" . $phone_number . "&" . (strlen($verify_code) ? ("verify_code=" . $verify_code . "&") : "");
-		foreach ($more as $arg_name => $arg_value) {
+		$post_data = "phone_number=" . $phone_number . "&";
+	
+		foreach ($options as $arg_name => $arg_value) {
 			$post_data .= $arg_name . "=" . urlencode($arg_value) . "&";
 		}
 		$post_data = substr($post_data, 0, -1);
@@ -191,18 +181,18 @@ class Telesign {
 	 * 
 	 * @param string $phone_number The phone number to send to service
 	 * @param string $service Service that this function use
-	 * @param string $more More data to send to service
+	 * @param array $options More optional data to send to service
 	 * 
 	 * @return string The fully formed response object repersentation of the JSON reply
 	 */
-	public function phoneid($phone_number, $service = "standard", $more = array()) {
+	public function phoneid($phone_number, $service = "standard", $options = array()) {
 
 		// build phoneid url
 		$resource = "/v1/phoneid/" . $service . "/" . $phone_number;
 		$url = $this->api_url . $resource;
-		if (count($more)) {
+		if (count($options)) {
 			$url .= "?";
-			foreach ($more as $arg_name => $arg_value) {
+			foreach ($options as $arg_name => $arg_value) {
 				$url .= $arg_name . "=" . urlencode($arg_value) . "&";
 			}
 			$url = substr($url, 0, -1);
@@ -222,7 +212,7 @@ class Telesign {
 	 * @return object The curl object
 	 */
 	public function get_curl_handle() {
-		return $this->curl;
+	       return $this->curl;
 	}
 
 	/**
@@ -231,7 +221,7 @@ class Telesign {
 	 * @return int 
 	 */
 	public function get_curl_error_number() {
-		return $this->curl_error_num;
+	       return $this->curl_error_num;
 	}
 
 	/**
@@ -255,16 +245,22 @@ class Telesign {
 		return curl_getinfo($this->curl, CURLINFO_HTTP_CODE);
 	}
 
-}
-
-/**
-* The Verify class exposes two services for sending users a verification token (a three to five-digit number). 
-* You can use this mechanism to simply test whether you can reach users at the phone number they supplied, or you can have them use the token to authenticate themselves with your web application. In addition, this class also exposes a service that allows you to confirm the result of the authentication.
-*
-* @package  Telesign_PHP_SDK
-* @access   public
-*/
-class Verify extends Telesign {
+         /**
+	 * Make a Verify API smart to TeleSigns phone service. Calling this method 
+	 * results in an automated phone call made to the given identifier. The language
+	 * is specified as a string. Extensions and delays are programmable using the
+	 * extension_type and extension template. 
+	 * 
+	 * @link https://developer.telesign.com/docs/rest_api-smart-verify
+	 * 
+	 * @param string $phone_number The phone number of the person to dial
+	 * @param array $options [optional] 
+	 * 
+	 * @return string The fully formed response object repersentation of the JSON reply
+	 */
+	public function smart($phone_number, $options = array()) {
+               return $this->verify($phone_number, $options, 'smart');
+	}
 
 	/**
 	 * Make a Verify API call to TeleSigns phone service. Calling this method 
@@ -275,32 +271,12 @@ class Verify extends Telesign {
 	 * @link https://portal.telesign.com/docs/content/verify-call.html
 	 * 
 	 * @param string $phone_number The phone number of the person to dial
-	 * @param string $verify_code [optional] if null, verify code will be generated by telesign
-	 * @param string $language [optional] The language code of the call 
-	 * @param string $verify_method [optional] Only available option is currently null (dictated code) or "keypress"
-	 * @param string $extension_type [optional] If 0, no extension. if 1, DTMF extension. If 2, voice extension
-	 * @param string $extension_template [optional] If null not used. Otherwise the extension to reach 
-	 * @param string $redial [optional]
+	 * @param array $options [optional] 
 	 * 
 	 * @return string The fully formed response object repersentation of the JSON reply
 	 */
-	public function call($phone_number, $verify_code = "", $language = "", $verify_method = "", $extension_type = "", $extension_template = "", $redial = "", $more = array()) {
-		if (!empty($language)) {
-			$more['language'] = $language;
-		}
-		if (!empty($verify_method)) {
-			$more['verify_method'] = $verify_method;
-		}
-		if (!empty($extension_type)) {
-			$more['extension_type'] = $extension_type;
-		}
-		if (!empty($extension_template)) {
-			$more['extension_template'] = $extension_template;
-		}
-		if (!empty($redial)) {
-			$more['redial'] = $redial;
-		}
-		return $this->verify($phone_number, $verify_code, 'call', $more);
+	public function call($phone_number, $options = array()) {
+               return $this->verify($phone_number, $options, 'call');
 	}
 
 	/**
@@ -310,21 +286,12 @@ class Verify extends Telesign {
 	 * @link https://portal.telesign.com/docs/content/verify-sms.html
 	 * 
 	 * @param string $phone_number The phone number to send the sms message
-	 * @param string $verify_code [optional] The code to send via sms. Set to null to let Telesign generate the code
-	 * @param string $language [optional] The String representation of the language to send the sms message
-	 * @param string $template [optional] The template of the message that is being sent. Set to null for default, otherwise must include $$CODE$$ as a variable placeholder
+	 * @param array $options [optional] 
 	 * 
 	 * @return string The fully formed response object repersentation of the JSON reply
 	 */
-	public function sms($phone_number, $verify_code = "", $language = "", $template = "") {
-		$more = array();
-		if (!empty($language)) {
-			$more['language'] = $language;
-		}
-		if (!empty($template)) {
-			$more['template'] = $template;
-		}
-		return $this->verify($phone_number, $verify_code, 'sms', $more);
+	public function sms($phone_number, $options = array()) {
+               return $this->verify($phone_number, $options, 'sms');
 	}
 
 	/**
@@ -349,16 +316,6 @@ class Verify extends Telesign {
 		$this->_sign($resource);
 		return json_decode($this->_submit_and_get_response(), TRUE);
 	}
-
-}
-
-/**
-* The PhoneId class exposes three services that each provide information about a specified phone number.
-*
-* @package  Telesign_PHP_SDK
-* @access   public
-*/
-class PhoneId extends Telesign {
 
 	/**
 	 * Make a phoneid standard request to Telesign's public API. Requires the 
@@ -390,7 +347,7 @@ class PhoneId extends Telesign {
 	 * @return string The fully formed response object repersentation of the JSON reply
 	 */
 	public function score($phone_number, $ucid) {
-		return $this->phoneid($phone_number, "score", array("ucid" => $ucid));
+		return $this->phoneid($phone_number, "score", $ucid);
 	}
 
 	/**
@@ -408,7 +365,7 @@ class PhoneId extends Telesign {
 	 * @return string The fully formed response object repersentation of the JSON reply
 	 */
 	public function contact($phone_number, $ucid) {
-		return $this->phoneid($phone_number, "contact", array("ucid" => $ucid));
+		return $this->phoneid($phone_number, "contact", $ucid);
 	}
 
 	/**
@@ -426,7 +383,7 @@ class PhoneId extends Telesign {
 	 * @return string The fully formed response object repersentation of the JSON reply
 	 */
 	public function live($phone_number, $ucid) {
-		return $this->phoneid($phone_number, "live", array("ucid" => $ucid));
+		return $this->phoneid($phone_number, "live", $ucid);
 	}
 
 }
