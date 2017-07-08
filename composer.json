@@ -1,0 +1,24 @@
+{
+  "name": "telesign/telesign",
+  "description": "TeleSign SDK",
+  "type": "library",
+  "keywords": [
+    "telesign", "sms", "voice", "mobile", "authentication", "identity", "messaging"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/telesign/php_telesign",
+  "authors": [
+    {
+      "name": "TeleSign Corp.",
+      "email": "support@telesign.com",
+      "homepage": "https://www.telesign.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.6.0",
+    "ext-curl": "*"
+  },
+  "autoload": {
+    "files": [ "telesign/api.class.php" ]
+  }
+}
