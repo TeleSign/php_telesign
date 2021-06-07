@@ -5,8 +5,8 @@
 
     <br>
 
-.. image:: https://img.shields.io/travis/TeleSign/php_telesign/master.svg
-    :target: https://travis-ci.org/TeleSign/php_telesign
+.. image:: https://img.shields.io/travis/com/TeleSign/php_telesign
+    :target: https://www.travis-ci.com/github/TeleSign/php_telesign
 
 .. image:: https://img.shields.io/codecov/c/github/TeleSign/php_telesign.svg
     :target: https://codecov.io/gh/TeleSign/php_telesign
@@ -41,7 +41,7 @@ Installation
 
   $ composer require telesign/telesign
 
-PHP **5.6+** is required for the TeleSign PHP SDK.
+PHP **7.2+** is required for the TeleSign PHP SDK.
 
 Authentication
 --------------

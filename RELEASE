@@ -1,3 +1,7 @@
+3.0.0
+- Drop support for PHP5.
+- Update dependencies and code to support PHP 7.2+
+
 2.2.3
  - Fixes #15 the default case for PhoneID
 
