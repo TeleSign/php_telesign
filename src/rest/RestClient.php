@@ -54,7 +54,7 @@ class RestClient {
 
     $sdk_version = VERSION;
     $php_version = PHP_VERSION;
-    $guzzle_version = Client::VERSION;
+    $guzzle_version = Client::MAJOR_VERSION;
 
     $this->user_agent = "TeleSignSDK/php-$sdk_version PHP/$php_version Guzzle/$guzzle_version";
   }

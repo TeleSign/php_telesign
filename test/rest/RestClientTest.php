@@ -126,7 +126,7 @@ final class RestClientTest extends TestCase {
 
     $user_agent = $mock->getLastRequest()->getHeader("user-agent")[0];
     $php_version = PHP_VERSION;
-    $guzzle_version = Client::VERSION;
+    $guzzle_version = Client::MAJOR_VERSION;
     $pattern = "`^TeleSignSDK/php-v?\d.+ PHP/$php_version Guzzle/$guzzle_version$`";
 
     $this->assertRegExp($pattern, $user_agent);

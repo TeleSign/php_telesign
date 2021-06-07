@@ -17,7 +17,7 @@ class ResponseTest extends TestCase {
   function testValidJsonResolvesArray () {
     $response = new Response(new Psr7Response(200, [], "{}"));
     $this->assertEquals("{}", $response->body);
-    $this->assertInternalType("array", $response->json);
+    $this->assertIsArray($response->json);
   }
 
 }
