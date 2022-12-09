@@ -7,7 +7,7 @@
 ## Requirements
 
 * **PHP 7.2+**.
-* **Composer*** *(optional)* - This package manager isn't required to use this SDK, but it is required to use the installation instructions below.  
+* **Composer** *(optional)* - This package manager isn't required to use this SDK, but it is required to use the installation instructions below.  
 
 > **NOTE:**
 > 
