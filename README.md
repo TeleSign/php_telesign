@@ -25,7 +25,33 @@ Follow these steps to add this SDK as a dependency to your project.
     mkdir {your project name}
     cd {your project name}
 ```
-2. Install the SDK as a dependency in the top-level directory of your project using the command below. Once the SDK is installed, you should see a message in the terminal notifying you that you have successfully installed the SDK.
+
+2. In the top-level directory for your project, create a new Composer project. 
+
+```
+composer init
+```
+
+Note that this command may need to be adjusted if your composer.phar file is not accessible in your PATH with the "composer" alias. If that is the case, reference the location of composer.phar on your file system for all Composer commands.
+
+```
+php {path to file}/composer.phar init
+```
+
+3. Enter the following selections when prompted:
+  * **Package name (<vendor>/<name>) [{default vendor name}/{default package name}]:** `{your preferred vendor name}/{your project name}` Use the same project name you chose for the top-level directory in step 1 above.
+  * **Description []:** Enter your preferred description or use the default.
+  * **Author [{default author name and email address}, n to skip]:** Enter your preferred description, use the default, or skip.
+  * **Minimum Stability []:** Enter your preferred value here or skip.
+  * **Package Type (e.g. library, project, metapackage, composer-plugin) []:** Enter your preferred package type.
+  * **License []:** Enter your preferred value here or skip.
+  * **Would you like to define your dependencies (require) interactively [yes]?** Enter your preferred value here or use the default.
+  * **Would you like to define your dev dependencies (require-dev) interactively [yes]?** Enter your preferred value here or use the default.
+  * **Would you like to define your dev dependencies (require-dev) interactively [yes]?** Enter your preferred value here or use the default.
+  * **Add PSR-4 autoload mapping? Maps namespace "{vendor}\{project}" to the entered relative path. [src/, n to skip]:** Enter your preferred value here or use the default.
+
+
+3. Install the Telesign Self-service PHP SDK as a dependency in the top-level directory of your Composer project using this command. Once the SDK is installed, you should see a message in the terminal notifying you that you have successfully installed the SDK.
 
     `composer require telesign/telesign`
 
