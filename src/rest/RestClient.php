@@ -207,7 +207,7 @@ class RestClient {
    * @return \telesign\sdk\rest\Response The RestClient Response object
    */
   protected function execute ($method_name, $resource, $fields = [], $date = null, $nonce = null) {
-    $url_encoded_fields = http_build_query($fields, null, "&");
+    $url_encoded_fields = http_build_query($fields, "", "&");
 
     $headers = $this->generateTelesignHeaders(
       $this->customer_id,
