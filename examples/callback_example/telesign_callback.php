@@ -5,7 +5,7 @@ const API_KEY = "YOUR API KEY GOES HERE";
 function _log($log_level, $log_message) {
   //syslog($log_level, $log_message);
   $stderr = fopen('php://stderr', 'w');
-  fwrite($stderr,sprintf("%s: %s\n", $log_level, $log_message));
+  fwrite($stderr,sprintf("%s: %s\n", $log_level,  htmlspecialchars($log_message)));
 }
 
 // TeleSign sends callback for Delivery Reports, Status Updates, and Mobile Originating SMS using the POST HTTP method.
@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $signature = base64_encode(
     hash_hmac("sha256", utf8_encode($postBody), base64_decode(API_KEY), true)
   );
-  list($authType, $authToken) = explode(' ', $_SERVER['HTTP_AUTHORIZATION'], 2);
+  list($authType, $authToken) = explode(' ', getallheaders()['Authorization'], 2);
   list($requestCustomerID, $requestSignature) = explode(':', $authToken, 2);
   if (hash_equals(CUSTOMER_ID, $requestCustomerID)) {
     if (hash_equals($signature, $requestSignature)) {
