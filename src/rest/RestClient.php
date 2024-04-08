@@ -37,7 +37,7 @@ class RestClient {
   function __construct (
     $customer_id,
     $api_key,
-    $rest_endpoint = "https://rest-ci.c11.telesign.com",
+    $rest_endpoint = "https://rest-api.telesign.com",
     $timeout = 10,
     $proxy = null,
     $handler = null
