@@ -7,9 +7,18 @@ function _log($log_level, $log_message) {
   $log_level_sanitized = htmlspecialchars($log_level, ENT_QUOTES, 'UTF-8');
   $log_message_sanitized = htmlspecialchars($log_message, ENT_QUOTES, 'UTF-8');
 
-  $stderr = fopen('php://stderr', 'w');
-  fwrite($stderr, sprintf("%s: %s\n", $log_level_sanitized, $log_message_sanitized));
-  fclose($stderr);
+  // Your log path goes here
+  $log_file_path = '/path/to/log/file.log';
+
+  $log_file_handle = fopen($log_file_path, 'a');
+  
+  if ($log_file_handle) {
+    fwrite($log_file_handle, sprintf("%s: %s\n", $log_level_sanitized, $log_message_sanitized));
+    
+    fclose($log_file_handle);
+  } else {
+    error_log("Error: Unable to open log file for writing.");
+  }
 }
 
 // TeleSign sends callback for Delivery Reports, Status Updates, and Mobile Originating SMS using the POST HTTP method.
