@@ -4,8 +4,12 @@ const API_KEY = "YOUR API KEY GOES HERE";
 
 function _log($log_level, $log_message) {
   //syslog($log_level, $log_message);
+  $log_level_sanitized = htmlspecialchars($log_level, ENT_QUOTES, 'UTF-8');
+  $log_message_sanitized = htmlspecialchars($log_message, ENT_QUOTES, 'UTF-8');
+
   $stderr = fopen('php://stderr', 'w');
-  fwrite($stderr,sprintf("%s: %s\n", $log_level,  htmlspecialchars($log_message)));
+  fwrite($stderr, sprintf("%s: %s\n", $log_level_sanitized, $log_message_sanitized));
+  fclose($stderr);
 }
 
 // TeleSign sends callback for Delivery Reports, Status Updates, and Mobile Originating SMS using the POST HTTP method.
