@@ -97,11 +97,11 @@ class RestClient {
     if (!$nonce) {
       $nonce = Uuid::uuid4()->toString();
     }
-    
+
     if (!$content_type) {
-        $content_type = in_array($method_name, ["POST", "PUT"]) ? "application/x-www-form-urlencoded" : "";
+        $content_type = in_array($method_name, ["POST", "PUT", "DELETE"]) ? "application/x-www-form-urlencoded" : "";
     }
-    
+
     $auth_method = "HMAC-SHA256";
 
     $string_to_sign_builder = [
@@ -220,7 +220,7 @@ class RestClient {
       $this->user_agent
     );
 
-    $option = in_array($method_name, [ "POST", "PUT" ]) ? "body" : "query";
+    $option = in_array($method_name, [ "POST", "PUT", "DELETE" ]) ? "body" : "query";
 
     return new Response($this->client->request($method_name, $resource, [
       "headers" => $headers,
