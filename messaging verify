@@ -1,0 +1,6 @@
+curl -X POST https://rest-api.telesign.com/v1/messaging \
+-d phone_number='09428130021' \
+-d message="Your code is: 123456" \
+-d message_type="OTP" \
+-u '031B6E8F-4C09-47FC-93AF-F0F6E8C66F38':'UTF-8 encoded'
+  
