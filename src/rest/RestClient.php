@@ -121,7 +121,12 @@ class RestClient {
     $string_to_sign = join("", $string_to_sign_builder);
 
     $signature = base64_encode(
-      hash_hmac("sha256", utf8_encode($string_to_sign), base64_decode($api_key), true)
+      hash_hmac(
+          "sha256",
+          mb_convert_encoding($string_to_sign, "UTF-8"),
+          base64_decode($api_key),
+          true
+      )
     );
     $authorization = "TSA $customer_id:$signature";
 
