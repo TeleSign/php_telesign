@@ -1,7 +1,7 @@
 [![packagist](https://img.shields.io/packagist/v/telesign/telesign.svg)](https://packagist.org/packages/telesign/telesign) [![license](https://img.shields.io/github/license/TeleSign/php_telesign.svg)](https://github.com/TeleSign/php_telesign/blob/master/LICENSE)
 
 # Telesign Self-service PHP SDK
-
+.
 [Telesign](https://telesign.com) connects, protects, and defends the customer experience with intelligence from billions of digital interactions and mobile signals. Through developer-friendly APIs that deliver user verification, digital identity, and omnichannel communications, we help the world's largest brands secure onboarding, maintain account integrity, prevent fraud, and streamline omnichannel engagement.
 
 ## Requirements
