@@ -1,3 +1,7 @@
+3.0.1
+- Updated dependencies and code to work with all versions of PHP
+- With PHP 8.2 and older
+
 3.0.0
 - Drop support for PHP5.
 - Update dependencies and code to support PHP 7.2+
