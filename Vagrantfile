@@ -1,7 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-remi = ["php72", "php73", "php74", "php80"]
+remi = ["php72", "php73", "php74", "php80", "php82"]
 
 composer = <<-SHELL
   EXPECTED_SIGNATURE=$(curl https://composer.github.io/installer.sig)
