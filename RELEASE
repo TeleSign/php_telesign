@@ -1,3 +1,6 @@
+3.0.2
+- Fixed deprecated function utf8_encode() in RestClient.php, changed it with mb_convert_encoding()
+
 3.0.1
 - Updated to fix support for PHP 8+
 

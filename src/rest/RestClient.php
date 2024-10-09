@@ -121,7 +121,7 @@ class RestClient {
     $string_to_sign = join("", $string_to_sign_builder);
 
     $signature = base64_encode(
-      hash_hmac("sha256", utf8_encode($string_to_sign), base64_decode($api_key), true)
+      hash_hmac("sha256", mb_convert_encoding($string_to_sign, "UTF-8", mb_detect_encoding($string_to_sign)), base64_decode($api_key), true)
     );
     $authorization = "TSA $customer_id:$signature";
 
@@ -208,7 +208,6 @@ class RestClient {
    */
   protected function execute ($method_name, $resource, $fields = [], $date = null, $nonce = null) {
     $url_encoded_fields = http_build_query($fields, "", "&");
-
     $headers = $this->generateTelesignHeaders(
       $this->customer_id,
       $this->api_key,
