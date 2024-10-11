@@ -2,4 +2,4 @@
 
 namespace telesign\sdk\version;
 
-const VERSION = "v3.0.1";
+const VERSION = "v3.0.2";

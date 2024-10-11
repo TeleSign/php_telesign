@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   // Generate a signature based on the contents of the callback request body signing with your API Secret Key.
   $postBody = file_get_contents('php://input');
   $signature = base64_encode(
-    hash_hmac("sha256", utf8_encode($postBody), base64_decode(API_KEY), true)
+    hash_hmac("sha256", mb_convert_encoding($postBody, "UTF-8", mb_detect_encoding($postBody)), base64_decode(API_KEY), true)
   );
   list($authType, $authToken) = explode(' ', getallheaders()['Authorization'], 2);
   list($requestCustomerID, $requestSignature) = explode(':', $authToken, 2);
