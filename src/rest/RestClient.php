@@ -23,6 +23,7 @@ class RestClient {
   protected $api_key;
   protected $user_agent;
   protected $client;
+  protected $rest_endpoint;
 
   /**
    * TeleSign RestClient instantiation function
@@ -44,9 +45,9 @@ class RestClient {
   ) {
     $this->customer_id = $customer_id;
     $this->api_key = $api_key;
+    $this->rest_endpoint = $rest_endpoint;
 
     $this->client = new Client([
-      "base_uri" => $rest_endpoint,
       "timeout" => $timeout,
       "proxy" => $proxy,
       "handler" => $handler
@@ -57,6 +58,10 @@ class RestClient {
     $guzzle_version = Client::MAJOR_VERSION;
 
     $this->user_agent = "TeleSignSDK/php-$sdk_version PHP/$php_version Guzzle/$guzzle_version";
+  }
+
+  function setRestEndpoint($rest_endpoint) {
+    $this->rest_endpoint = $rest_endpoint;
   }
 
   /**
@@ -76,6 +81,8 @@ class RestClient {
    * @param string $date               The date and time of the request
    * @param string $nonce              A unique cryptographic nonce for the request
    * @param string $user_agent         User Agent associated with the request
+   * @param string $content_type       Content-Type to send in header
+   * @param string $auth_method        Authentication method
    *
    * @return array The TeleSign authentication headers
    */
@@ -88,7 +95,8 @@ class RestClient {
     $date = null,
     $nonce = null,
     $user_agent = null,
-    $content_type = null
+    $content_type = null,
+    $auth_method = "HMAC-SHA256"
   ) {
     if (!$date) {
       $date = gmdate("D, d M Y H:i:s T");
@@ -101,30 +109,35 @@ class RestClient {
     if (!$content_type) {
         $content_type = in_array($method_name, ["POST", "PUT"]) ? "application/x-www-form-urlencoded" : "";
     }
-    
-    $auth_method = "HMAC-SHA256";
 
-    $string_to_sign_builder = [
-      $method_name,
-      "\n$content_type",
-      "\n$date",
-      "\nx-ts-auth-method:$auth_method",
-      "\nx-ts-nonce:$nonce"
-    ];
 
-    if ($content_type && $url_encoded_fields) {
-      $string_to_sign_builder[] = "\n$url_encoded_fields";
+    if ($auth_method === "Basic") {
+      $credentials = base64_encode("$customer_id:$api_key");
+
+      $authorization = "Basic $credentials";
+    } else {
+      $string_to_sign_builder = [
+        $method_name,
+        "\n$content_type",
+        "\n$date",
+        "\nx-ts-auth-method:$auth_method",
+        "\nx-ts-nonce:$nonce"
+      ];
+  
+      if ($content_type && $url_encoded_fields) {
+        $string_to_sign_builder[] = "\n$url_encoded_fields";
+      }
+  
+      $string_to_sign_builder[] = "\n$resource";
+  
+      $string_to_sign = join("", $string_to_sign_builder);
+  
+      $signature = base64_encode(
+        hash_hmac("sha256", mb_convert_encoding($string_to_sign, "UTF-8", mb_detect_encoding($string_to_sign)), base64_decode($api_key), true)
+      );
+      $authorization = "TSA $customer_id:$signature";
     }
-
-    $string_to_sign_builder[] = "\n$resource";
-
-    $string_to_sign = join("", $string_to_sign_builder);
-
-    $signature = base64_encode(
-      hash_hmac("sha256", mb_convert_encoding($string_to_sign, "UTF-8", mb_detect_encoding($string_to_sign)), base64_decode($api_key), true)
-    );
-    $authorization = "TSA $customer_id:$signature";
-
+    
     $headers = [
       "Authorization" => $authorization,
       "Date" => $date,
@@ -203,28 +216,40 @@ class RestClient {
    * @param array  $fields   Body of query params to perform the HTTP request with
    * @param string $date     The date and time of the request
    * @param string $nonce    A unique cryptographic nonce for the request
+   * @param string $content_type   Content-Type to send in header
+   * @param string $auth_method    Authentication method
    *
    * @return \telesign\sdk\rest\Response The RestClient Response object
    */
-  protected function execute ($method_name, $resource, $fields = [], $date = null, $nonce = null) {
-    $url_encoded_fields = http_build_query($fields, "", "&");
+  protected function execute ($method_name, $resource, $fields = [], $date = null, $nonce = null, $content_type = null, $auth_method = "HMAC-SHA256") {
+    $content_is_json = $content_type === "application/json";
+
+    if ($content_is_json) {
+      $form_body = json_encode($fields);
+    } else {
+      $url_encoded_fields = http_build_query($fields, "", "&");
+    }
+
     $headers = $this->generateTelesignHeaders(
       $this->customer_id,
       $this->api_key,
       $method_name,
       $resource,
-      $url_encoded_fields,
+      $content_is_json ? null : $url_encoded_fields,
       $date,
       $nonce,
-      $this->user_agent
+      $this->user_agent,
+      $content_type,
+      $auth_method
     );
 
     $option = in_array($method_name, [ "POST", "PUT" ]) ? "body" : "query";
 
     return new Response($this->client->request($method_name, $resource, [
       "headers" => $headers,
-      $option => $url_encoded_fields,
-      "http_errors" => false
+      $option => $content_is_json ? $form_body : $url_encoded_fields,
+      "http_errors" => false,
+      "base_uri" => $this->rest_endpoint,
     ]));
   }
 
