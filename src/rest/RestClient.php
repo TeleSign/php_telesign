@@ -225,7 +225,7 @@ class RestClient {
     $content_is_json = $content_type === "application/json";
 
     if ($content_is_json) {
-      $form_body = json_encode($fields);
+      $form_body = json_encode($fields, count($fields) === 0 ? JSON_FORCE_OBJECT : 0);
     } else {
       $url_encoded_fields = http_build_query($fields, "", "&");
     }
