@@ -13,15 +13,14 @@ class Example {
   const ACCOUNT_LIFECYCLE_EVENT = "create";
 
   static function objExampleVerification() {
-    $obj = new \stdClass();
-
-    $info_number = new \stdClass();
-    $info_number->phone_number = self::PHONE_NUMBER;
-
-    $obj->recipient = $info_number;
-    $info_policy = new \stdClass();
-    $info_policy->method = "sms";
-    $obj->verification_policy[] = $info_policy;
+    $obj = [
+      "verification_policy" => [
+        [ "method" => "sms" ]
+      ],
+      "recipient" => [
+        "phone_number" => self::PHONE_NUMBER
+      ]
+    ];
 
     return $obj;
   }
