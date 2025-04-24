@@ -28,10 +28,10 @@
   },
   "autoload": {
     "psr-4": { "telesign\\sdk\\": "src/" },
-    "files": [ "src/util.php", "src/version/version.php" ]
+    "files": [ "src/util.php" ]
   },
   "autoload-dev": {
-    "psr-4": { "telesign\\sdk\\": "test/", "telesign\\sdk\\version\\": "./" }
+    "psr-4": { "telesign\\sdk\\": "test/"}
   },
   "scripts": {
     "test": "phpunit --bootstrap ./vendor/autoload.php test/ --coverage-clover coverage.xml --whitelist src/",
