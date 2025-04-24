@@ -5,8 +5,7 @@ namespace telesign\sdk\rest;
 use Eloquent\Composer\Configuration\ConfigurationReader;
 use GuzzleHttp\Client;
 use Ramsey\Uuid\Uuid;
-
-use const telesign\sdk\version\VERSION;
+use telesign\sdk\Config;
 
 /**
  * The TeleSign RestClient is a generic HTTP REST client that can be extended to make requests against any of
@@ -31,6 +30,8 @@ class RestClient {
    * @param string   $customer_id   Your customer_id string associated with your account
    * @param string   $api_key       Your api_key string associated with your account
    * @param string   $rest_endpoint Override the default rest_endpoint to target another endpoint string
+   * @param string   $source        Indicates from where requests are made (Fs or SS)
+   * @param string   $sdk_version   Indicate the version of SDK
    * @param float    $timeout       How long to wait for the server to send data before giving up
    * @param string   $proxy         URL of the proxy
    * @param callable $handler       Guzzle's HTTP transfer override
@@ -39,6 +40,8 @@ class RestClient {
     $customer_id,
     $api_key,
     $rest_endpoint = "https://rest-api.telesign.com",
+    $source = "php_telesign",
+    $sdk_version = null,
     $timeout = 10,
     $proxy = null,
     $handler = null
@@ -53,11 +56,11 @@ class RestClient {
       "handler" => $handler
     ]);
 
-    $sdk_version = VERSION;
+    $current_version = $sdk_version ?? Config::getVersion();
     $php_version = PHP_VERSION;
     $guzzle_version = Client::MAJOR_VERSION;
 
-    $this->user_agent = "TeleSignSDK/php-$sdk_version PHP/$php_version Guzzle/$guzzle_version";
+    $this->user_agent = "TeleSignSDK/php PHP/$php_version Guzzle/$guzzle_version OriginatingSDK/$source SDKVersion/$current_version";
   }
 
   function setRestEndpoint($rest_endpoint) {

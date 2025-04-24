@@ -1,3 +1,12 @@
+3.0.5
+- Added tracking to requests
+
+3.0.4
+- Remove overloading of Phone ID
+
+3.0.3
+- Added support for request bodies with application/json content-type
+
 3.0.2
 - Added dependency for extension mbstring
 - Fixed deprecated function utf8_encode() in RestClient.php, changed it with mb_convert_encoding()
