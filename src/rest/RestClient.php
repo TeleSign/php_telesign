@@ -41,7 +41,8 @@ class RestClient {
     $api_key,
     $rest_endpoint = "https://rest-api.telesign.com",
     $source = "php_telesign",
-    $sdk_version = null,
+    $sdk_version_origin = null,
+    $sdk_version_dependency = null,
     $timeout = 10,
     $proxy = null,
     $handler = null
@@ -56,11 +57,15 @@ class RestClient {
       "handler" => $handler
     ]);
 
-    $current_version = $sdk_version ?? Config::getVersion();
+    $current_version = $sdk_version_origin ?? Config::getVersion();
     $php_version = PHP_VERSION;
     $guzzle_version = Client::MAJOR_VERSION;
 
     $this->user_agent = "TeleSignSDK/php PHP/$php_version Guzzle/$guzzle_version OriginatingSDK/$source SDKVersion/$current_version";
+
+    if ($source !== 'php_telesign') {
+      $this->user_agent .= " DependencySDKVersion/$sdk_version_dependency";
+    }
   }
 
   function setRestEndpoint($rest_endpoint) {

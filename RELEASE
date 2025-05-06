@@ -1,3 +1,6 @@
+3.0.6
+- Add tracking of when SDK is used as a dependency
+
 3.0.5
 - Added tracking to requests
 
