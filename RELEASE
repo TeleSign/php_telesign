@@ -1,4 +1,7 @@
 3.0.6
+- Added support for PATCH requests
+
+3.0.6
 - Add tracking of when SDK is used as a dependency
 
 3.0.5
