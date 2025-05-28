@@ -82,7 +82,7 @@ class RestClient {
    *
    * @param string $customer_id        Your account customer_id
    * @param string $api_key            Your account api_key
-   * @param string $method_name        The HTTP method name of the request, should be one of 'POST', 'GET', 'PUT' or
+   * @param string $method_name        The HTTP method name of the request, should be one of 'POST', 'GET', 'PUT', 'PATCH' or
    *                                   'DELETE'
    * @param string $resource           The partial resource URI to perform the request against
    * @param string $url_encoded_fields HTTP body parameters to perform the HTTP request with, must be urlencoded
