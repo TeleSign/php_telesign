@@ -218,6 +218,20 @@ class RestClient {
   }
 
   /**
+   * Generic TeleSign REST API PATCH handler
+   *
+   * @param string $resource The partial resource URI to perform the request against
+   * @param array  $fields   Query params to perform the PATCH request with
+   * @param string $date     The date and time of the request
+   * @param string $nonce    A unique cryptographic nonce for the request
+   *
+   * @return \telesign\sdk\rest\Response The RestClient Response object
+   */
+  function patch (...$args) {
+    return $this->execute("PATCH", ...$args);
+  }
+
+  /**
    * Generic TeleSign REST API request handler
    *
    * @param string $resource The partial resource URI to perform the request against
@@ -251,7 +265,7 @@ class RestClient {
       $auth_method
     );
 
-    $option = in_array($method_name, [ "POST", "PUT" ]) ? "body" : "query";
+    $option = in_array($method_name, [ "POST", "PUT", "PATCH" ]) ? "body" : "query";
 
     return new Response($this->client->request($method_name, $resource, [
       "headers" => $headers,

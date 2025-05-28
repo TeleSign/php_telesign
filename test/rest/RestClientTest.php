@@ -26,6 +26,7 @@ final class RestClientTest extends TestCase {
    * @dataProvider getRequestExamples
    */
   function testTelesignHeadersMatchExample ($data) {
+    $auth_method = $data["auth_method"] ?? "HMAC-SHA256";
     $actual_headers = RestClient::generateTelesignHeaders(
       self::EXAMPLE_CUSTOMER_ID,
       self::EXAMPLE_API_KEY,
@@ -33,14 +34,17 @@ final class RestClientTest extends TestCase {
       self::EXAMPLE_RESOURCE,
       self::EXAMPLE_URL_ENCODED_FIELDS,
       self::EXAMPLE_DATE,
-      self::EXAMPLE_NONCE
+      self::EXAMPLE_NONCE,
+      null,
+      $data["request"]["headers"]["content-type"],
+      $auth_method
     );
 
     $expected_headers = [
       "Authorization" => $data["request"]["headers"]["authorization"],
       "Date" => self::EXAMPLE_DATE,
       "Content-Type" => $data["request"]["headers"]["content-type"],
-      "x-ts-auth-method" => "HMAC-SHA256",
+      "x-ts-auth-method" => $auth_method,
       "x-ts-nonce" => self::EXAMPLE_NONCE
     ];
 
@@ -92,7 +96,19 @@ final class RestClientTest extends TestCase {
             "content-type" => ""
           ]
         ]
-      ]]
+      ]],
+      [[
+        "method_name" => "PATCH",
+        "auth_method" => "Basic",
+        "request" => [
+          "uri" => self::EXAMPLE_REST_ENDPOINT . self::EXAMPLE_RESOURCE,
+          "body" => self::EXAMPLE_FIELDS,
+          "headers" => [
+            "authorization" => "Basic RkZGRkZGRkYtRUVFRS1ERERELTEyMzQtQUIxMjM0NTY3ODkwOkVYQU1QTEUtLS0tVEU4c1RnZzQ1eXVzdW1vTjZCWXNCVmtoK3lSSjVjemdzbkNlaFphT1lsZFBKZG1GaDZOZVg4a3VuWjJ6VTFZV2FVdy8wd1Y2eGZ3PT0=",
+            "content-type" => "application/json"
+          ]
+        ]
+      ]],
     ];
   }
 
@@ -120,14 +136,14 @@ final class RestClientTest extends TestCase {
     $mock = new MockHandler([ new Response() ]);
 
     $client = new RestClient(
-      self::EXAMPLE_CUSTOMER_ID, self::EXAMPLE_API_KEY, self::EXAMPLE_REST_ENDPOINT, 10, null, $mock
+      self::EXAMPLE_CUSTOMER_ID, self::EXAMPLE_API_KEY, self::EXAMPLE_REST_ENDPOINT, "php_telesign", null, null, 10, null, $mock
     );
     $client->get(self::EXAMPLE_RESOURCE);
 
     $user_agent = $mock->getLastRequest()->getHeader("user-agent")[0];
     $php_version = PHP_VERSION;
     $guzzle_version = Client::MAJOR_VERSION;
-    $pattern = "`^TeleSignSDK/php-v?\d.+ PHP/$php_version Guzzle/$guzzle_version$`";
+    $pattern = "`^TeleSignSDK/php PHP/$php_version Guzzle/$guzzle_version OriginatingSDK/php_telesign SDKVersion/[a-zA-Z0-9.\-_]+$`";
 
     $this->assertRegExp($pattern, $user_agent);
   }
@@ -139,10 +155,12 @@ final class RestClientTest extends TestCase {
     $mock = new MockHandler([ new Response() ]);
 
     $client = new RestClient(
-      self::EXAMPLE_CUSTOMER_ID, self::EXAMPLE_API_KEY, self::EXAMPLE_REST_ENDPOINT, 10, null, $mock
+      self::EXAMPLE_CUSTOMER_ID, self::EXAMPLE_API_KEY, self::EXAMPLE_REST_ENDPOINT, "php_telesign", null, null, 10, null, $mock
     );
+    $auth_method = $data["auth_method"] ?? "HMAC-SHA256";
+    $content_type = $data["request"]["headers"]["content-type"];
     $client->{$data["method_name"]}(
-      self::EXAMPLE_RESOURCE, self::EXAMPLE_FIELDS, self::EXAMPLE_DATE, self::EXAMPLE_NONCE
+      self::EXAMPLE_RESOURCE, self::EXAMPLE_FIELDS, self::EXAMPLE_DATE, self::EXAMPLE_NONCE, $content_type, $auth_method
     );
 
     $request = $mock->getLastRequest();
@@ -151,7 +169,14 @@ final class RestClientTest extends TestCase {
     $this->assertEquals($data["request"]["uri"], $request->getUri());
     $this->assertTrue($request->hasHeader("authorization"));
     $this->assertEquals($data["request"]["headers"]["authorization"], $request->getHeader("authorization")[0]);
-    $this->assertEquals($data["request"]["body"], $request->getBody());
+
+    $bodyContent = $request->getBody();
+    if ($content_type === "application/json") {
+      $parsedBody = json_decode($bodyContent, true);
+      $this->assertEquals($data["request"]["body"], $parsedBody);
+    } else {
+      $this->assertEquals($data["request"]["body"], $bodyContent);
+    }
   }
 
   /**
@@ -161,7 +186,7 @@ final class RestClientTest extends TestCase {
     $mock = new MockHandler([ new Response() ]);
 
     $client = new RestClient(
-      self::EXAMPLE_CUSTOMER_ID, self::EXAMPLE_API_KEY, self::EXAMPLE_REST_ENDPOINT, 10, null, $mock
+      self::EXAMPLE_CUSTOMER_ID, self::EXAMPLE_API_KEY, self::EXAMPLE_REST_ENDPOINT, "php_telesign", null, null, 10, null, $mock
     );
     $response = $client->{$data["method_name"]}(
       self::EXAMPLE_RESOURCE, self::EXAMPLE_FIELDS, self::EXAMPLE_DATE, self::EXAMPLE_NONCE

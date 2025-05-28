@@ -23,7 +23,7 @@ abstract class ClientTest extends TestCase {
   function testRequestFormat ($client, $method, $args, $expected_url, $expected_fields) {
     $mock = new MockHandler([ new Response() ]);
     $client = new $client(
-      self::EXAMPLE_CUSTOMER_ID, self::EXAMPLE_API_KEY, self::EXAMPLE_REST_ENDPOINT, 10, null, $mock
+      self::EXAMPLE_CUSTOMER_ID, self::EXAMPLE_API_KEY, self::EXAMPLE_REST_ENDPOINT, "php_telesign", null, null, 10, null, $mock
     );
     $client->$method(...$args);
     $request = $mock->getLastRequest();
