@@ -8,8 +8,8 @@ use Ramsey\Uuid\Uuid;
 use telesign\sdk\Config;
 
 /**
- * The TeleSign RestClient is a generic HTTP REST client that can be extended to make requests against any of
- * TeleSign's REST API endpoints.
+ * The Telesign RestClient is a generic HTTP REST client that can be extended to make requests against any of
+ * Telesign's REST API endpoints.
  *
  * RequestEncodingMixin offers the function _encode_params for url encoding the body for use in string_to_sign outside
  * of a regular HTTP request.
@@ -25,7 +25,7 @@ class RestClient {
   protected $rest_endpoint;
 
   /**
-   * TeleSign RestClient instantiation function
+   * Telesign RestClient instantiation function
    *
    * @param string   $customer_id   Your customer_id string associated with your account
    * @param string   $api_key       Your api_key string associated with your account
@@ -73,10 +73,10 @@ class RestClient {
   }
 
   /**
-   * Generates the TeleSign REST API headers used to authenticate requests.
+   * Generates the Telesign REST API headers used to authenticate requests.
    *
    * Creates the canonicalized string_to_sign and generates the HMAC signature. This is used to authenticate requests
-   * against the TeleSign REST API.
+   * against the Telesign REST API.
    *
    * See https://developer.telesign.com/docs/authentication-1 for detailed API documentation.
    *
@@ -92,7 +92,7 @@ class RestClient {
    * @param string $content_type       Content-Type to send in header
    * @param string $auth_method        Authentication method
    *
-   * @return array The TeleSign authentication headers
+   * @return array The Telesign authentication headers
    */
   static function generateTelesignHeaders (
     $customer_id,
@@ -162,7 +162,7 @@ class RestClient {
   }
 
   /**
-   * Generic TeleSign REST API POST handler
+   * Generic Telesign REST API POST handler
    *
    * @param string $resource The partial resource URI to perform the request against
    * @param array  $fields   Body params to perform the POST request with
@@ -176,7 +176,7 @@ class RestClient {
   }
 
   /**
-   * Generic TeleSign REST API GET handler
+   * Generic Telesign REST API GET handler
    *
    * @param string $resource The partial resource URI to perform the request against
    * @param array  $fields   Query params to perform the GET request with
@@ -190,7 +190,7 @@ class RestClient {
   }
 
   /**
-   * Generic TeleSign REST API PUT handler
+   * Generic Telesign REST API PUT handler
    *
    * @param string $resource The partial resource URI to perform the request against
    * @param array  $fields   Query params to perform the DELETE request with
@@ -204,7 +204,7 @@ class RestClient {
   }
 
   /**
-   * Generic TeleSign REST API DELETE handler
+   * Generic Telesign REST API DELETE handler
    *
    * @param string $resource The partial resource URI to perform the request against
    * @param array  $fields   Query params to perform the DELETE request with
@@ -218,7 +218,7 @@ class RestClient {
   }
 
   /**
-   * Generic TeleSign REST API PATCH handler
+   * Generic Telesign REST API PATCH handler
    *
    * @param string $resource The partial resource URI to perform the request against
    * @param array  $fields   Query params to perform the PATCH request with
@@ -232,7 +232,7 @@ class RestClient {
   }
 
   /**
-   * Generic TeleSign REST API request handler
+   * Generic Telesign REST API request handler
    *
    * @param string $resource The partial resource URI to perform the request against
    * @param array  $fields   Body of query params to perform the HTTP request with
