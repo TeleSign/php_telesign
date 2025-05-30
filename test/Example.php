@@ -5,7 +5,8 @@ namespace telesign\sdk;
 class Example {
 
   const CUSTOMER_ID = "FFFFFFFF-EEEE-DDDD-1234-AB1234567890";
-  const API_KEY = "EXAMPLE----TE8sTgg45yusumoN6BYsBVkh+yRJ5czgsnCehZaOYldPJdmFh6NeX8kunZ2zU1YWaUw/0wV6xfw==";
+  const API_KEY = "ABC12345yusumoN6BYsBVkh+yRJ5czgsnCehZaOYldPJdmFh6NeX8kunZ2zU1YWaUw/0wV6xfw==";
+  const AUTH_BASIC_STRING = "Basic RkZGRkZGRkYtRUVFRS1ERERELTEyMzQtQUIxMjM0NTY3ODkwOkFCQzEyMzQ1eXVzdW1vTjZCWXNCVmtoK3lSSjVjemdzbkNlaFphT1lsZFBKZG1GaDZOZVg4a3VuWjJ6VTFZV2FVdy8wd1Y2eGZ3PT0=";
   const REST_ENDPOINT = "https://www.example.com";
   const PHONE_NUMBER = "13103409700";
   const UCID = "OTHR";

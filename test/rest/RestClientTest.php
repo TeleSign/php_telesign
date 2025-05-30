@@ -59,7 +59,7 @@ final class RestClientTest extends TestCase {
           "uri" => self::EXAMPLE_REST_ENDPOINT . self::EXAMPLE_RESOURCE,
           "body" => self::EXAMPLE_URL_ENCODED_FIELDS,
           "headers" => [
-            "authorization" => "TSA FFFFFFFF-EEEE-DDDD-1234-AB1234567890:smUGWEeXtN+WT1s/y1Ssp4Q2Acm/ultPxkgl/GjqSsA=",
+            "authorization" => "TSA FFFFFFFF-EEEE-DDDD-1234-AB1234567890:dzREwjKg3/o02ABsf8itcNiNzzKWM293qOavWhfkkok=",
             "content-type" => "application/x-www-form-urlencoded",
           ]
         ]
@@ -70,7 +70,7 @@ final class RestClientTest extends TestCase {
           "uri" => self::EXAMPLE_REST_ENDPOINT . self::EXAMPLE_RESOURCE . "?" . self::EXAMPLE_URL_ENCODED_FIELDS,
           "body" => "",
           "headers" => [
-            "authorization" => "TSA FFFFFFFF-EEEE-DDDD-1234-AB1234567890:YgzQt6LcuBDSUeTpE4SASXcSAKAm1eL5TWetbxhXJxg=",
+            "authorization" => "TSA FFFFFFFF-EEEE-DDDD-1234-AB1234567890:rtUnnJ8wPWEq/pxxT5H+Pj78WHicDzkVYP+dIStuKiQ=",
             "content-type" => ""
           ]
         ]
@@ -81,7 +81,7 @@ final class RestClientTest extends TestCase {
           "uri" => self::EXAMPLE_REST_ENDPOINT . self::EXAMPLE_RESOURCE,
           "body" => self::EXAMPLE_URL_ENCODED_FIELDS,
           "headers" => [
-            "authorization" => "TSA FFFFFFFF-EEEE-DDDD-1234-AB1234567890:ccNQP7Tdwsfqx/Sdz/MmZuhFh+z0z/Bj+OcwDhbTT0s=",
+            "authorization" => "TSA FFFFFFFF-EEEE-DDDD-1234-AB1234567890:U2s4H/VqFVnb/flIk9ynhUn6no+VBi2Jlc4YUh4H08k=",
             "content-type" => "application/x-www-form-urlencoded"
           ]
         ]
@@ -92,7 +92,7 @@ final class RestClientTest extends TestCase {
           "uri" => self::EXAMPLE_REST_ENDPOINT . self::EXAMPLE_RESOURCE . "?" . self::EXAMPLE_URL_ENCODED_FIELDS,
           "body" => "",
           "headers" => [
-            "authorization" => "TSA FFFFFFFF-EEEE-DDDD-1234-AB1234567890:ODT8s51qSdrS2pKbtrKIu76gQJf2h0hDz8nJ5ho0/6w=",
+            "authorization" => "TSA FFFFFFFF-EEEE-DDDD-1234-AB1234567890:PjtMTR0t1JzTZEuB7GKlOpdxpsyaX4Zy+4MBWnwii4w=",
             "content-type" => ""
           ]
         ]
@@ -104,7 +104,7 @@ final class RestClientTest extends TestCase {
           "uri" => self::EXAMPLE_REST_ENDPOINT . self::EXAMPLE_RESOURCE,
           "body" => self::EXAMPLE_FIELDS,
           "headers" => [
-            "authorization" => "Basic RkZGRkZGRkYtRUVFRS1ERERELTEyMzQtQUIxMjM0NTY3ODkwOkVYQU1QTEUtLS0tVEU4c1RnZzQ1eXVzdW1vTjZCWXNCVmtoK3lSSjVjemdzbkNlaFphT1lsZFBKZG1GaDZOZVg4a3VuWjJ6VTFZV2FVdy8wd1Y2eGZ3PT0=",
+            "authorization" => Example::AUTH_BASIC_STRING,
             "content-type" => "application/json"
           ]
         ]
