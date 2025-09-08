@@ -1,3 +1,6 @@
+4.0.0
+- Removed all functionality and methods for App Verify SDK
+
 3.0.7
 - Added support for PATCH requests
 
