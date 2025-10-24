@@ -1,3 +1,6 @@
+4.0.1
+- Updated psr/http-message dependency to allow both v1 and v2
+
 4.0.0
 - Removed all functionality and methods for App Verify SDK
 
