@@ -28,6 +28,7 @@
   },
   "autoload": {
     "psr-4": { "telesign\\sdk\\": "src/" },
+    "classmap": ["src/config.php"],
     "files": [ "src/util.php" ]
   },
   "autoload-dev": {
