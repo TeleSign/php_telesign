@@ -1,8 +1,11 @@
+5.0.0
+- Added support for Intelligence Cloud to use new endpoint
+
 4.0.2
 - Added config.php to Composer’s autoload classmap to prevent file-loading errors on case-sensitive systems, while maintaining compatibility with existing integrations.
 
 4.0.1
-- Updated psr/http-message dependency to allow both v1 and v2
+- Updated psr/http-message dependency to allow both v1 and v2 
 
 4.0.0
 - Removed all functionality and methods for App Verify SDK

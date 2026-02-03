@@ -5,22 +5,53 @@ namespace telesign\sdk\score;
 use telesign\sdk\rest\RestClient;
 
 /**
- * Score provides risk information about a specified phone number.
+ * ScoreClient for TeleSign Intelligence Cloud.
+ * Supports POST /intelligence/phone endpoint only (Cloud migration).
+ * Sends phone number and parameters in the request body encoded as application/x-www-form-urlencoded.
+ * See https://developer.telesign.com/enterprise/docs/intelligence-cloud-get-started for documentation.
  */
-class ScoreClient extends RestClient {
+class ScoreClient extends RestClient
+{
+    const DETECT_HOST = "https://detect.telesign.com";
+    const INTELLIGENCE_RESOURCE = "/intelligence/phone";
 
-  const SCORE_RESOURCE = "/v1/score/%s";
+    public function __construct($customer_id, $api_key, $rest_endpoint = self::DETECT_HOST)
+    {
+        parent::__construct($customer_id, $api_key, $rest_endpoint);
+    }
 
-  /**
-   * Score is an API that delivers reputation scoring based on phone number intelligence, traffic patterns, machine
-   * learning, and a global data consortium.
-   *
-   * See https://developer.telesign.com/docs/score-api for detailed API documentation.
-   */
-  function score ($phone_number, $account_lifecycle_event, array $other = []) {
-    return $this->post(sprintf(self::SCORE_RESOURCE, $phone_number), array_merge($other, [
-      "account_lifecycle_event" => $account_lifecycle_event
-    ]));
-  }
+    /**
+     * Obtain a risk recommendation for a phone number using Telesign Intelligence Cloud API.
+     * Required parameters:
+     *   - phone_number
+     *   - account_lifecycle_event ("create", "sign-in", "transact", "update", "delete")
+     * Optional parameters include account_id, device_id, email_address, external_id, originating_ip.
+     * API: POST https://detect.telesign.com/intelligence/phone
+     * 
+     * See https://developer.telesign.com/enterprise/reference/submitphonenumberforintelligencecloud for detailed API documentation.
+     */
+    public function score($phone_number, $account_lifecycle_event, array $optional = [])
+    {
+        if (empty($phone_number)) {
+            throw new \InvalidArgumentException("phone_number cannot be null or empty");
+        }
 
+        if (empty($account_lifecycle_event)) {
+            throw new \InvalidArgumentException("account_lifecycle_event cannot be null or empty");
+        }
+
+        $params = array_merge($optional, [
+            "phone_number" => $phone_number,
+            "account_lifecycle_event" => $account_lifecycle_event
+        ]);
+
+        return $this->post(
+            self::INTELLIGENCE_RESOURCE,
+            $params,
+            null,
+            null,
+            "application/x-www-form-urlencoded",
+            "HMAC-SHA256"
+        );
+    }
 }
