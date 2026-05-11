@@ -26,7 +26,7 @@ final class UtilTest extends TestCase {
 
   function testVerifyTelesignCallbackSignatureCorrect () {
     $api_key = Example::API_KEY;
-    $header_value = "B97g3N9lPdVaptvifxRau7bzVAC5hhRBZ6HKXABN744=";
+    $header_value = "ZvOW/5agRa8LQAsMoqBM6F3xBZ2uOMVNOI8kRh/p7CI=";
     $json_str = "{'test': 123}";
 
     $this->assertTrue(verifyTelesignCallbackSignature($api_key, $header_value, $json_str));

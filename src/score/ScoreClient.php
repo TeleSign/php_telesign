@@ -14,10 +14,11 @@ class ScoreClient extends RestClient
 {
     const DETECT_HOST = "https://detect.telesign.com";
     const INTELLIGENCE_RESOURCE = "/intelligence/phone";
+    const EMAIL_INTELLIGENCE_RESOURCE = "/intelligence/email";
 
-    public function __construct($customer_id, $api_key, $rest_endpoint = self::DETECT_HOST)
+    public function __construct($customer_id, $api_key, $rest_endpoint = self::DETECT_HOST, ...$other)
     {
-        parent::__construct($customer_id, $api_key, $rest_endpoint);
+        parent::__construct($customer_id, $api_key, $rest_endpoint, ...$other);
     }
 
     /**
@@ -47,6 +48,41 @@ class ScoreClient extends RestClient
 
         return $this->post(
             self::INTELLIGENCE_RESOURCE,
+            $params,
+            null,
+            null,
+            "application/x-www-form-urlencoded",
+            "HMAC-SHA256"
+        );
+    }
+
+        /**
+        * Obtain a risk recommendation for an email address using Telesign Intelligence Cloud API.
+        * Required parameters:
+        *   - email_address
+        *   - account_lifecycle_event ("create", "sign-in", "transact", "update", "delete")
+        * Optional parameters include account_id, device_id, phone_number, external_id, originating_ip.
+        * API: POST https://detect.telesign.com/intelligence/email
+        * 
+        * See https://developer.telesign.com/enterprise/reference/submitemailaddressforemailintelligence for detailed API documentation.
+        */
+    public function emailIntelligence($email_address, $account_lifecycle_event, array $optional = [])
+    {
+        if (empty($email_address)) {
+            throw new \InvalidArgumentException("email_address cannot be null or empty");
+        }
+
+        if (empty($account_lifecycle_event)) {
+            throw new \InvalidArgumentException("account_lifecycle_event cannot be null or empty");
+        }
+
+        $params = array_merge($optional, [
+            "email_address" => $email_address,
+            "account_lifecycle_event" => $account_lifecycle_event
+        ]);
+
+        return $this->post(
+            self::EMAIL_INTELLIGENCE_RESOURCE,
             $params,
             null,
             null,
