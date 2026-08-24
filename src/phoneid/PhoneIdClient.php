@@ -4,6 +4,7 @@ namespace telesign\sdk\phoneid;
 
 use telesign\sdk\rest\RestClient;
 use telesign\sdk\rest\Response;
+use telesign\sdk\rest\RouteAutoLoader;
 
 use Ramsey\Uuid\Uuid;
 
@@ -14,6 +15,13 @@ use Ramsey\Uuid\Uuid;
 class PhoneIdClient extends RestClient {
 
   const PHONEID_RESOURCE = "/v1/phoneid/%s";
+
+  use RouteAutoLoader;
+
+  public function __construct($customer_id, $api_key, $rest_endpoint = self::REST_ENDPOINT, ...$other) {
+    parent::__construct($customer_id, $api_key, $rest_endpoint, ...$other);
+    $this->routeMap = $this->loadAutomatedRoutes();
+  }
 
   /**
    * The PhoneID API provides a cleansed phone number, phone type, and telecom carrier information to determine the

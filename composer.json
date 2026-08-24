@@ -3,7 +3,13 @@
   "description": "TeleSign SDK",
   "type": "library",
   "keywords": [
-    "telesign", "sms", "voice", "mobile", "authentication", "identity", "messaging"
+    "telesign",
+    "sms",
+    "voice",
+    "mobile",
+    "authentication",
+    "identity",
+    "messaging"
   ],
   "license": "MIT",
   "homepage": "https://github.com/telesign/php_telesign",
@@ -27,15 +33,24 @@
     "composer/semver": "^3"
   },
   "autoload": {
-    "psr-4": { "telesign\\sdk\\": "src/" },
-    "classmap": ["src/config.php"],
-    "files": [ "src/util.php" ]
+    "psr-4": {
+      "telesign\\sdk\\": "src/"
+    },
+    "classmap": [
+      "src/config.php"
+    ],
+    "files": [
+      "src/util.php"
+    ]
   },
   "autoload-dev": {
-    "psr-4": { "telesign\\sdk\\": "test/"}
+    "psr-4": {
+      "telesign\\sdk\\": "test/"
+    }
   },
   "scripts": {
     "test": "phpunit --bootstrap ./vendor/autoload.php test/ --coverage-clover coverage.xml --whitelist src/",
-    "bump-version": "telesign\\sdk\\version\\Version::bumpVersion"
+    "bump-version": "telesign\\sdk\\version\\Version::bumpVersion",
+    "build-routes": "bash ./autogen.sh"
   }
 }

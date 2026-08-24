@@ -3,6 +3,7 @@
 namespace telesign\sdk\score;
 
 use telesign\sdk\rest\RestClient;
+use telesign\sdk\rest\RouteAutoLoader;
 
 /**
  * ScoreClient for TeleSign Intelligence Cloud.
@@ -16,9 +17,12 @@ class ScoreClient extends RestClient
     const INTELLIGENCE_RESOURCE = "/intelligence/phone";
     const EMAIL_INTELLIGENCE_RESOURCE = "/intelligence/email";
 
+    use RouteAutoLoader;
+
     public function __construct($customer_id, $api_key, $rest_endpoint = self::DETECT_HOST, ...$other)
     {
         parent::__construct($customer_id, $api_key, $rest_endpoint, ...$other);
+        $this->routeMap = $this->loadAutomatedRoutes();
     }
 
     /**
@@ -90,4 +94,5 @@ class ScoreClient extends RestClient
             "HMAC-SHA256"
         );
     }
+
 }

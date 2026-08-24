@@ -3,3 +3,4 @@
 /vendor/
 /.vagrant/
 /coverage.xml
+batch_process_sdk_autogen/
