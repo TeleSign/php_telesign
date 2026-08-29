@@ -1,6 +1,7 @@
 <?php
 
 namespace telesign\sdk;
+
 use Composer\InstalledVersions;
 
 class Config {
